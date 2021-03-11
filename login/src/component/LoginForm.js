@@ -5,9 +5,9 @@ function LoginForm ({Login,error}){
     const [password, setpassword] = useState("");
 
     const submitHandler = e =>{
-        e.preventDefault();
-        let details = {Name,email,password}
-        Login(details)
+         e.preventDefault();
+         let details = {Name,email,password}
+         Login(details)
     }
     return (
         <form onSubmit={submitHandler}>
@@ -29,6 +29,7 @@ function LoginForm ({Login,error}){
                 <input type="submit" value="LOGIN"/>
             </div>
         </form>
+        
     )
 }
 
