@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import LoginForm from './component/LoginForm'
+import QR from './component/QR'
+import { Link, Route, BrowserRouter as Router, Switch } from 'react-router-dom'
 function App() {
   const adminUse = {
     email: "admin@gmail.com",
@@ -32,6 +34,7 @@ function App() {
         <div className="welcome">
           <h2>Welcome ,<span>{user.Name}</span></h2>
           <button onClick={Logout}>Logout</button>
+          <QR />
         </div>
       ) : (
           <LoginForm Login={Login} error={error} />
