@@ -8,105 +8,84 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.FirebaseDatabase
 import com.google.zxing.integration.android.IntentIntegrator
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.*
-
 
 class ScannerActivity : AppCompatActivity() {
 
+    //Declaring variables
     private lateinit var scanButton : Button
     private var qrScanIntegrator: IntentIntegrator? = null
-
     private var user:String? = ""
     private var timeNow :String? =""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scanner)
+
+        //Receiving username from main activity
         user= intent.getStringExtra("Username")
 
-        val simpleDateFormat = SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z")
-        timeNow = simpleDateFormat.format(Date())
-
+        //Initializing variables
         initializer()
+
+        //Initiating scan
         scanButton.setOnClickListener {
             performAction()
         }
-
         qrScanIntegrator = IntentIntegrator(this)
         qrScanIntegrator?.setOrientationLocked(false)
 
     }
 
-
+    //Initializing variables
     private fun initializer(){
         scanButton = findViewById(R.id.scanButton_id)
+        val simpleDateFormat = SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z")
+        timeNow = simpleDateFormat.format(Date())
     }
 
+    //Initiating scan.
     private fun performAction() {
         qrScanIntegrator?.initiateScan()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
+
             // If QRCode has no data.
             if (result.contents == null) {
                 Toast.makeText(this, "Invalid QR code!", Toast.LENGTH_SHORT).show()
             }
-            else
-            {
-                // If QRCode contains data.
-                   /*
-                    try {
-                    // Converting the data to json format
-                    val obj = JSONObject(result.contents)
+            else {
 
-                    // Show values in UI.
-                   txtName?.text = obj.getString("name")
-                    Toast.makeText(this, "YESSSSS!!", Toast.LENGTH_SHORT).show()
-                    // txtSiteName?.text = obj.getString("site_name")
+                //On successful scan, compare data with secret CODE to validate QR code.
+                var CODE :String = result.contents.toString();
 
-                } catch (e: JSONException) {
-                    e.printStackTrace()
+                //If result data matches with CODE send username to DB to mark attendance
+                if(CODE == "abc.com") {
+                    val database = FirebaseDatabase.getInstance()
+                    val myRef = database.getReference("Participants")
+                    Toast.makeText(this, "Attendance marked successfully.", Toast.LENGTH_SHORT).show()
 
-                    // Data not in the expected format. So, whole object as toast message.
-                    Toast.makeText(this, result.contents, Toast.LENGTH_LONG).show()
+                    //Setting firebase unique key for Hashmap list
+                    val key: String? = myRef.push().getKey()
+                    if (key != null) {
+
+                        //Sending username with timestamp to DB.
+                        myRef.child(key).setValue(user,  timeNow)
+                    }
+                    Toast.makeText(this, "Attendance marked successfully.", Toast.LENGTH_SHORT).show()
                 }
-
-
-                    */
-
-               var CODE :String = result.contents.toString();
-               if(CODE == "abc.com")
-               {
-                   val database = FirebaseDatabase.getInstance()
-                   val myRef = database.getReference("Participants")
-
-                   //myRef.setValue(user)
-                   Toast.makeText(this, "Attendance marked successfully.", Toast.LENGTH_SHORT).show()
-
-
-                   //Setting firebase unique key for Hashmap list
-                   val key: String? = myRef.push().getKey()
-
-                   if (key != null) {
-                       myRef.child(key).setValue(user,  timeNow)
-                   }
-                   Toast.makeText(this, "Attendance marked successfully.", Toast.LENGTH_SHORT).show()
-
-               }
-               else
-               {
+                //If data does not match, show failure message
+                else {
                    Toast.makeText(this, "Invalid QR code!", Toast.LENGTH_SHORT).show()
-               }
-
+                }
             }
         }
         else {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
-
-
 }
