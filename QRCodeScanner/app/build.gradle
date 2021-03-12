@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'realm-android'
 }
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 30
@@ -35,6 +36,7 @@ realm {
 
 dependencies {
 
+
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -45,4 +47,12 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation platform('com.google.firebase:firebase-bom:26.0.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-database:11.0.4'
+    implementation 'com.google.firebase:firebase-auth:11.0.4'
+
+    implementation 'com.google.firebase:firebase-auth-ktx:20.0.1'
+
 }
+apply plugin: 'com.google.gms.google-services'
